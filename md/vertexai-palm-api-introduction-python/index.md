@@ -115,14 +115,11 @@ if __name__ == '__main__':
 
 4. **Chat Function**: This function takes a message, sends it to the AI model, and returns a poem based on the message.
 
-```jinja
-{% extends "base.html" %}
-
-{% block content %}
+```html
 <div class="row">
     <div class="col-12">
         <div id="chat-box" class="bg-light p-3 mb-3 rounded">
-            {% include 'messages.html' %}
+            Bot: Hello, how can I help you today?
         </div>
         <div class="input-group">
             <input id="chat-input" type="text" class="form-control" placeholder="Type your message...">
@@ -132,9 +129,7 @@ if __name__ == '__main__':
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block script %}
 <script>
 $(function() {
     $('#send-button').click(function() {
@@ -157,7 +152,6 @@ $(function() {
     });
 });
 </script>
-{% endblock %}
 ```
 
 <!-- ------------------------ -->

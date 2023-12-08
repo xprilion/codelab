@@ -127,13 +127,10 @@ if __name__ == &#39;__main__&#39;:
 <ol type="1" start="4">
 <li><strong>Chat Function</strong>: This function takes a message, sends it to the AI model, and returns a poem based on the message.</li>
 </ol>
-<pre><code language="language-jinja" class="language-jinja">{% extends &#34;base.html&#34; %}
-
-{% block content %}
-&lt;div class=&#34;row&#34;&gt;
+<pre><code language="language-html" class="language-html">&lt;div class=&#34;row&#34;&gt;
     &lt;div class=&#34;col-12&#34;&gt;
         &lt;div id=&#34;chat-box&#34; class=&#34;bg-light p-3 mb-3 rounded&#34;&gt;
-            {% include &#39;messages.html&#39; %}
+            Bot: Hello, how can I help you today?
         &lt;/div&gt;
         &lt;div class=&#34;input-group&#34;&gt;
             &lt;input id=&#34;chat-input&#34; type=&#34;text&#34; class=&#34;form-control&#34; placeholder=&#34;Type your message...&#34;&gt;
@@ -143,9 +140,7 @@ if __name__ == &#39;__main__&#39;:
         &lt;/div&gt;
     &lt;/div&gt;
 &lt;/div&gt;
-{% endblock %}
 
-{% block script %}
 &lt;script&gt;
 $(function() {
     $(&#39;#send-button&#39;).click(function() {
@@ -168,7 +163,6 @@ $(function() {
     });
 });
 &lt;/script&gt;
-{% endblock %}
 </code></pre>
 
 
