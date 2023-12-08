@@ -4,7 +4,7 @@ categories: Sample
 tags: medium
 status: Published 
 authors: Anubhav Singh
-Feedback Link: https://xprilion.com
+Feedback Link: https://xprilion.com/codelabs/
 
 # How to Write a Codelab
 <!-- ------------------------ -->

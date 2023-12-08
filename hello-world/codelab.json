@@ -3,13 +3,13 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2023-12-05T13:36:33+05:30",
+  "updated": "2023-12-08T14:13:49+05:30",
   "id": "hello-world",
   "duration": 8,
   "title": "How to Write a Codelab",
   "authors": "Anubhav Singh",
   "summary": "How to Write a Codelab",
-  "source": "hello-world.md",
+  "source": "md/hello-world/hello-world.md",
   "theme": "",
   "status": [
     "published"
@@ -20,6 +20,6 @@
   "tags": [
     "medium"
   ],
-  "feedback": "https://xprilion.com",
+  "feedback": "https://xprilion.com/codelabs/",
   "url": "hello-world"
 }
