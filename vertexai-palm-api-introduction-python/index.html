@@ -1,0 +1,222 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Introduction to Building Solutions with PaLM2 API via VertexAI on GCP</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid="G-NKJL65V2YL"
+                  codelab-ga4id=""
+                  id="vertexai-palm-api-introduction-python"
+                  title="Introduction to Building Solutions with PaLM2 API via VertexAI on GCP"
+                  environment="web"
+                  feedback-link="https://xprilion.com/codelabs/">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Hey there!</p>
+<p>In this Codelab, we&#39;ll walk through creating a simple chatbot based game using Google Cloud&#39;s Vertex AI and Flask, a popular web framework in Python. Our application will ask you to</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Requirements" duration="2">
+        <p>In order to follow this codelab, you&#39;ll need the following:</p>
+<ol type="1">
+<li>A Google Cloud Platform account with active billing.</li>
+<li>A development environment with Python 3.7 or above installed.</li>
+<li>Access to terminal/shell for executing commands.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Your Google Cloud Environment" duration="10">
+        <ol type="1">
+<li>Log in to your <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Platform</a> account.</li>
+<li>Create a new project, let&#39;s name it <code>project-x</code>.</li>
+<li>Enable <a href="https://cloud.google.com/billing/docs/how-to/modify-project" target="_blank">billing for the project</a>.</li>
+<li>Navigate to the <a href="https://console.cloud.google.com/apis/dashboard" target="_blank">APIs &amp; Services dashboard</a> and enable the Vertex AI API.</li>
+<li><a href="https://cloud.google.com/iam/docs/keys-create-delete" target="_blank">Create a service account and download the JSON key file</a> (<code>key.json</code>). Store this file safely.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Your Local Environment" duration="5">
+        <ol type="1">
+<li>Install Flask: <pre><code language="language-bash" class="language-bash">pip install Flask
+</code></pre>
+</li>
+<li>Install other required libraries: <pre><code language="language-bash" class="language-bash">pip install marko google-cloud-aiplatform
+</code></pre>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Write the driving code" duration="10">
+        <ol type="1">
+<li><strong>Importing Libraries</strong>: We start by importing necessary Python libraries. Flask for our web framework, Vertex AI for AI model interaction, and others for various functionalities.</li>
+</ol>
+<pre><code language="language-python" class="language-python">import os
+from flask import Flask, request, Response, g, render_template, jsonify
+import marko
+import vertexai
+from vertexai.language_models import TextGenerationModel
+from google.oauth2 import service_account
+</code></pre>
+<ol type="1" start="2">
+<li><strong>Initializing the App and Vertex AI</strong>: We initialize our Flask app and configure Vertex AI with our GCP project details.</li>
+</ol>
+<pre><code language="language-python" class="language-python">credentials = service_account.Credentials.from_service_account_file(&#39;./key.json&#39;)
+
+app = Flask(__name__)
+app.debug = True
+
+vertexai.init(project=&#34;gcp-adventure-x&#34;, location=&#34;us-central1&#34;, credentials=credentials)
+parameters = {
+    &#34;temperature&#34;: 1,
+    &#34;max_output_tokens&#34;: 256,
+    &#34;top_p&#34;: 0.8,
+    &#34;top_k&#34;: 40
+}
+
+model = TextGenerationModel.from_pretrained(&#34;text-bison@001&#34;)
+</code></pre>
+<ol type="1" start="3">
+<li><strong>Defining Routes</strong>: We define two routes - one for the home page and another for handling chat messages.</li>
+</ol>
+<pre><code language="language-python" class="language-python">@app.route(&#39;/&#39;, methods=[&#39;GET&#39;])
+def hello_world():
+    return render_template(&#34;chat.html&#34;)
+
+@app.route(&#39;/chat/&lt;message&gt;&#39;, methods=[&#39;GET&#39;])
+def chat(message):
+    response = model.predict(
+        &#34;generate a poem with the message that follows, make it sound like shakespeare, make it funny, no longer than 12 lines: &#34; + message,
+        **parameters
+    )
+
+    print(response)
+
+    return jsonify({
+        &#34;response&#34;: marko.convert(response.text)
+    })
+
+
+if __name__ == &#39;__main__&#39;:
+    app.run(debug=True, host=&#34;0.0.0.0&#34;, port=int(os.environ.get(&#34;PORT&#34;, 8080)))
+</code></pre>
+<ol type="1" start="4">
+<li><strong>Chat Function</strong>: This function takes a message, sends it to the AI model, and returns a poem based on the message.</li>
+</ol>
+<pre><code language="language-jinja" class="language-jinja">{% extends &#34;base.html&#34; %}
+
+{% block content %}
+&lt;div class=&#34;row&#34;&gt;
+    &lt;div class=&#34;col-12&#34;&gt;
+        &lt;div id=&#34;chat-box&#34; class=&#34;bg-light p-3 mb-3 rounded&#34;&gt;
+            {% include &#39;messages.html&#39; %}
+        &lt;/div&gt;
+        &lt;div class=&#34;input-group&#34;&gt;
+            &lt;input id=&#34;chat-input&#34; type=&#34;text&#34; class=&#34;form-control&#34; placeholder=&#34;Type your message...&#34;&gt;
+            &lt;div class=&#34;input-group-append&#34;&gt;
+                &lt;button id=&#34;send-button&#34; class=&#34;btn btn-primary&#34;&gt;Send&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+{% endblock %}
+
+{% block script %}
+&lt;script&gt;
+$(function() {
+    $(&#39;#send-button&#39;).click(function() {
+        var input = $(&#39;#chat-input&#39;).val().trim();
+        if (input != &#39;&#39;) {
+            $(&#39;#chat-box&#39;).append(&#39;&lt;div class=&#34;p-2 mt-2 rounded bg-primary text-white&#34;&gt;User: &#39; + input + &#39;&lt;/div&gt;&#39;);
+            $(&#39;#chat-input&#39;).val(&#39;&#39;);
+            // Use AJAX to send the input to the server and get a response
+            $.ajax({
+                url: &#39;/chat/&#39; + encodeURIComponent(input),
+                type: &#39;GET&#39;,
+                success: function(data) {
+                    $(&#39;#chat-box&#39;).append(&#39;&lt;div class=&#34;p-2 mt-2 rounded bg-secondary text-white&#34;&gt;Bot: &#39; + data.response + &#39;&lt;/div&gt;&#39;);
+                },
+                error: function() {
+                    $(&#39;#chat-box&#39;).append(&#39;&lt;div class=&#34;p-2 mt-2 rounded bg-secondary text-white&#34;&gt;Bot: Sorry, I am not able to respond at the moment.&lt;/div&gt;&#39;);
+                }
+            });
+        }
+    });
+});
+&lt;/script&gt;
+{% endblock %}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running the App" duration="2">
+        <ol type="1">
+<li>Run your application: <pre><code language="language-bash" class="language-bash">python app.py
+</code></pre>
+</li>
+<li>Open your web browser and go to <code>http://localhost:8080</code>. You should see your chatbot interface.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Interacting with Your Chatbot" duration="2">
+        <ol type="1">
+<li>Enter a message in the chat interface.</li>
+<li>The chatbot will respond with a Shakespearean-style poem, humorously tailored to your message.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You&#39;ve just built and deployed a simple chatbot using Flask and Google Cloud&#39;s Vertex AI. This bot takes user input and generates creative, Shakespearean-style poems with a humorous twist.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="What&#39;s Next?" duration="1">
+        <ul>
+<li>Experiment with different model parameters to see how they affect the output.</li>
+<li>Try integrating this chatbot into a larger web application.</li>
+<li>Explore other capabilities of Vertex AI.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
