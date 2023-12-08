@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2023-12-08T14:13:55+05:30",
+  "updated": "2023-12-08T14:45:55+05:30",
   "id": "test-world",
   "duration": 8,
   "title": "How to Write a Codelab",
@@ -21,5 +21,6 @@
     "medium"
   ],
   "feedback": "https://xprilion.com/codelabs/",
+  "ga": "G-NKJL65V2YL",
   "url": "test-world"
 }
