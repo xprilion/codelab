@@ -107,7 +107,10 @@ def hello_world():
 @app.route(&#39;/chat/&lt;guess&gt;/&lt;actual&gt;&#39;, methods=[&#39;GET&#39;])
 def chat(guess, actual):
     response = model.predict(
-        &#34;You are a bot in a guessing game where the player tries to guess a secret item you are thinking about. The player has just guessed &#34; + guess + &#34;. If the user is right, tell them they are right and ask them to refresh the page to start a new game. If they are not very close to the actual item, respond with a humorous remark about their guess, related somehow to their guess and the actual secret item, which is &#34; + actual + &#34;. Then provide a subtle hint to guide the player closer to the actual secret item. Never in your response include the actual item name unless the user has guessed it correctly is is very very close!&#34;,
+        &#34;You are the bot in a guessing game where the player tries to guess a secret item you are thinking about. &#34; +
+        &#34;The rules of the game are: 1. the player will make a guess. 2. if the guess is correct or very close to the correct answer, you will say, &#39;Congratulations, you&#39;ve got it right!&#39; &#34; +
+         &#34;3. If they are not very close to the actual item, respond with a humorous remark about their guess. Then without mentioning the actual item, &#34; + actual + &#34;, provide a subtle hint to guide the player closer to the secret item.&#34; +
+        &#34;The player has just guessed &#34; + guess + &#34;.&#34;,
         **parameters
     )
 
