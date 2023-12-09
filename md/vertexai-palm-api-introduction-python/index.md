@@ -66,18 +66,16 @@ from flask import Flask, request, Response, g, render_template, jsonify
 import marko
 import vertexai
 from vertexai.language_models import TextGenerationModel
-from google.oauth2 import service_account
 ```
 
 2. **Initializing the App and Vertex AI**: We initialize our Flask app and configure Vertex AI with our GCP project details.
 
 ```python
-credentials = service_account.Credentials.from_service_account_file('./key.json')
 
 app = Flask(__name__)
 app.debug = True
 
-vertexai.init(project="gcp-adventure-x", location="us-central1", credentials=credentials)
+vertexai.init(project="project-x", location="us-central1")
 parameters = {
     "temperature": 1,
     "max_output_tokens": 256,
@@ -95,57 +93,87 @@ model = TextGenerationModel.from_pretrained("text-bison@001")
 def hello_world():
     return render_template("chat.html")
 
-@app.route('/chat/<message>', methods=['GET'])
-def chat(message):
+@app.route('/chat/<guess>/<actual>', methods=['GET'])
+def chat(guess, actual):
     response = model.predict(
-        "generate a poem with the message that follows, make it sound like shakespeare, make it funny, no longer than 12 lines: " + message,
+        "You are a bot in a guessing game where the player tries to guess a secret item you are thinking about. The player has just guessed " + guess + ". If the user is right, tell them they are right and ask them to refresh the page to start a new game. If they are not very close to the actual item, respond with a humorous remark about their guess, related somehow to their guess and the actual secret item, which is " + actual + ". Then provide a subtle hint to guide the player closer to the actual secret item. Never in your response include the actual item name unless the user has guessed it correctly is is very very close!",
         **parameters
     )
-
-    print(response)
 
     return jsonify({
         "response": marko.convert(response.text)
     })
 
 
+
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 ```
+With the backend done, we're free to implement the UI for the API in any manner we want to.
 
-4. **Chat Function**: This function takes a message, sends it to the AI model, and returns a poem based on the message.
+## UI for the application
+Duration: 10
+
+Now, we can develop a quick UI to work with the API of the chatbot. Here's some sample HTML/JS to create one such UI.
 
 ```html
-<div class="row">
-    <div class="col-12">
-        <div id="chat-box" class="bg-light p-3 mb-3 rounded">
-            Bot: Hello, how can I help you today?
-        </div>
-        <div class="input-group">
-            <input id="chat-input" type="text" class="form-control" placeholder="Type your message...">
-            <div class="input-group-append">
-                <button id="send-button" class="btn btn-primary">Send</button>
-            </div>
+<div>
+    <div id="chat-box" class="bg-light p-3 mb-3 rounded">
+        <blockquote style="border-left: 4px solid #43a047;">Bot: Can you guess what am I thinking?</blockquote>
+    </div>
+    <progress id="progress-bar" style="display: none"></progress>
+    <div class="input-group">
+        <input id="chat-input" type="text" class="form-control" placeholder="Type your message...">
+        <div class="input-group-append">
+            <button id="send-button" class="btn btn-primary">Guess</button>
+            <button id="quit-button">Give Up</button>
         </div>
     </div>
 </div>
 
 <script>
 $(function() {
+    const items = [
+    "Eiffel Tower",
+    "Pineapple",
+    // ... many more!
+    "Rubik's Cube",
+    "Bamboo"
+];
+
+    var actual_item = items[Math.floor(Math.random()*items.length)];
+
+    $('#chat-input').keypress(function(e) {
+        if(e.which == 13) { // 13 is the Enter key
+            $('#send-button').click();
+        }
+    });
+
+    $('#quit-button').click(function() {
+        $('#chat-box').append('<blockquote style="border-left: 4px solid red;">Bot: The answer was ' + actual_item + '</blockquote>');
+        $('#chat-input').val('');
+        $('#chat-input').prop('disabled', true);
+        $('#send-button').prop('disabled', true);
+        $('#quit-button').prop('disabled', true);
+    });
+
     $('#send-button').click(function() {
         var input = $('#chat-input').val().trim();
-        if (input != '') {
-            $('#chat-box').append('<div class="p-2 mt-2 rounded bg-primary text-white">User: ' + input + '</div>');
+        if (input !== '') {
+            $('#chat-box').append('<blockquote style="border-left: 4px solid dodgerblue;">User: ' + input + '</blockquote>');
             $('#chat-input').val('');
+            $('#progress-bar').show();
             // Use AJAX to send the input to the server and get a response
             $.ajax({
-                url: '/chat/' + encodeURIComponent(input),
+                url: '/chat/' + encodeURIComponent(input) + '/' + encodeURIComponent(actual_item),
                 type: 'GET',
                 success: function(data) {
-                    $('#chat-box').append('<div class="p-2 mt-2 rounded bg-secondary text-white">Bot: ' + data.response + '</div>');
+                    $('#chat-box').append('<blockquote style="border-left: 4px solid #43a047;">Bot: ' + data.response + '</blockquote>');
+                    $('#progress-bar').hide();
                 },
                 error: function() {
-                    $('#chat-box').append('<div class="p-2 mt-2 rounded bg-secondary text-white">Bot: Sorry, I am not able to respond at the moment.</div>');
+                    $('#chat-box').append('<blockquote style="border-left: 4px solid red;">Bot: Sorry, I am not able to respond at the moment.</blockquote>');
+                    $('#progress-bar').hide();
                 }
             });
         }
@@ -160,7 +188,7 @@ Duration: 2
 
 1. Run your application:
    ```bash
-   python app.py
+   python main.py
    ```
 2. Open your web browser and go to `http://localhost:8080`. You should see your chatbot interface.
 
@@ -169,15 +197,16 @@ Duration: 2
 ## Interacting with Your Chatbot
 Duration: 2
 
-1. Enter a message in the chat interface.
-2. The chatbot will respond with a Shakespearean-style poem, humorously tailored to your message.
+0. The bot will greet you asking you to guess what the bot is thinking about.
+1. Enter a guess in the chat interface.
+2. The chatbot will respond with if your guess was close to what the actual secret item it was thinking about!
 
 
 <!-- ------------------------ -->
 ## Conclusion
 Duration: 1
 
-Congratulations! You've just built and deployed a simple chatbot using Flask and Google Cloud's Vertex AI. This bot takes user input and generates creative, Shakespearean-style poems with a humorous twist.
+Congratulations! You've just built and deployed a simple chatbot using Flask and Google Cloud's Vertex AI. This bot plays a guessing game with the users!
 
 
 <!-- ------------------------ -->
