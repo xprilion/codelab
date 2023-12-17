@@ -242,11 +242,18 @@ $(function() {
 ## Running the App
 Duration: 2
 
-1. Run your application:
+1. Set the `API_KEY` as environment variable in the terminal:
+
+```bash
+export API_KEY=your_api_key
+```
+
+2. Run your application:
    ```bash
    python main.py
    ```
-2. Open your web browser and go to `http://localhost:8080`. You should see your chatbot interface.
+   
+3. Open your web browser and go to `http://localhost:8080`. You should see your chatbot interface.
 
 
 <!-- ------------------------ -->
