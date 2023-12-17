@@ -1,0 +1,291 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Example of a Python Flask application built with Gemini Pro Vision Multimodal</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid="G-NKJL65V2YL"
+                  codelab-ga4id=""
+                  id="gemini-pro-vision-multimodal-python-flask-generative-ai-example"
+                  title="Example of a Python Flask application built with Gemini Pro Vision Multimodal"
+                  environment="web"
+                  feedback-link="https://xprilion.com/codelabs/">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Hey there!</p>
+<p>In this codelab, you&#39;ll explore building a Python Flask application that leverages Gemini Pro Vision Multimodal&#39;s capabilities to perform tasks like image classification, object detection, and text understanding. By the end, you&#39;ll have a practical understanding of integrating Gemini Pro Vision into your backend applications.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Requirements" duration="2">
+        <p>In order to follow this codelab, you&#39;ll need the following:</p>
+<ol type="1">
+<li>A development environment with Python 3.7 or above installed.</li>
+<li>Access to terminal/shell for executing commands.</li>
+<li>Basic understanding of Python and Flask</li>
+<li>Familiarity with REST APIs is helpful but not mandatory</li>
+<li>Access to a Gemini Pro Vision model</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Your Dev Environment" duration="10">
+        <ol type="1">
+<li>Log in to your <a href="https://makersuite.google.com/" target="_blank">Google AI Studio</a> account.</li>
+<li>Create a new <code>API KEY</code>.</li>
+<li>Note the API Key in a secure location.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Your Local Environment" duration="5">
+        <ol type="1">
+<li>Install Flask: <pre><code language="language-bash" class="language-bash">pip install Flask
+</code></pre>
+</li>
+<li>Install other required libraries: <pre><code language="language-bash" class="language-bash">pip install marko google-generativeai
+</code></pre>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Write the driving code" duration="10">
+        <ol type="1">
+<li><strong>Importing Libraries</strong>: We start by importing necessary Python libraries. Flask for our web framework, Vertex AI for AI model interaction, and others for various functionalities.</li>
+</ol>
+<pre><code language="language-python" class="language-python">import os
+from flask import Flask, request, Response, g, render_template, jsonify
+import marko
+import google.generativeai as genai
+</code></pre>
+<ol type="1" start="2">
+<li><strong>Initializing the App and Gemini API</strong>: We initialize our Flask app and load the Gemini API client.</li>
+</ol>
+<pre><code language="language-python" class="language-python">genai.configure(api_key=os.getenv(&#34;API_KEY&#34;))
+
+app = Flask(__name__)
+app.debug = True
+
+config = {
+  &#39;temperature&#39;: 0,
+  &#39;top_k&#39;: 20,
+  &#39;top_p&#39;: 0.9,
+  &#39;max_output_tokens&#39;: 500
+}
+</code></pre>
+<p>We also need to confiugre the security settings for the model output:</p>
+<pre><code language="language-python" class="language-python">safety_settings = [
+  {
+    &#34;category&#34;: &#34;HARM_CATEGORY_HARASSMENT&#34;,
+    &#34;threshold&#34;: &#34;BLOCK_MEDIUM_AND_ABOVE&#34;
+  },
+  {
+    &#34;category&#34;: &#34;HARM_CATEGORY_HATE_SPEECH&#34;,
+    &#34;threshold&#34;: &#34;BLOCK_MEDIUM_AND_ABOVE&#34;
+  },
+  {
+    &#34;category&#34;: &#34;HARM_CATEGORY_SEXUALLY_EXPLICIT&#34;,
+    &#34;threshold&#34;: &#34;BLOCK_MEDIUM_AND_ABOVE&#34;
+  },
+  {
+    &#34;category&#34;: &#34;HARM_CATEGORY_DANGEROUS_CONTENT&#34;,
+    &#34;threshold&#34;: &#34;BLOCK_MEDIUM_AND_ABOVE&#34;
+  }
+]
+
+model = genai.GenerativeModel(model_name=&#34;gemini-pro-vision&#34;,
+                              generation_config=config,
+                              safety_settings=safety_settings)
+
+</code></pre>
+<ol type="1" start="3">
+<li><strong>Defining Routes</strong>: We define two routes - one for the home page and another for handling chat messages.</li>
+</ol>
+<pre><code language="language-python" class="language-python">@app.route(&#39;/&#39;, methods=[&#39;GET&#39;])
+def hello_world():
+    return render_template(&#34;chat.html&#34;)
+
+@app.route(&#39;/chat&#39;, methods=[&#39;POST&#39;])
+def chat():
+    if &#39;user_image&#39; not in request.files:
+        return jsonify({&#34;error&#34;: &#34;No file part&#34;})
+
+    file = request.files[&#39;user_image&#39;]
+
+    if file.filename == &#39;&#39;:
+        return jsonify({&#34;error&#34;: &#34;No selected file&#34;})
+
+    if file:
+        image_data = file.read()
+        image_parts = [
+            {
+                &#34;mime_type&#34;: file.content_type,
+                &#34;data&#34;: image_data
+            },
+        ]
+
+        prompt_parts = [
+            &#34;You are Sheldon Cooper. User will upload an image. Based on the image, you have to come up with a Sheldon Cooper style fun fact. Also give a funny, sarcastic note about the image. \n\nUser&#39;s image:\n\n&#34;,
+            image_parts[0],
+            &#34;\n\nFun fact:\n&#34;,
+        ]    
+
+        response = model.generate_content(prompt_parts)
+
+        return jsonify({
+            &#34;response&#34;: marko.convert(response.text)
+        })
+</code></pre>
+<p>Finally, we&#39;ll add the entrypoint for the file which runs the Flask development server.</p>
+<pre><code language="language-python" class="language-python">if __name__ == &#39;__main__&#39;:
+    app.run(debug=True, host=&#34;0.0.0.0&#34;, port=int(os.environ.get(&#34;PORT&#34;, 8080)))
+</code></pre>
+<p>With the backend done, we&#39;re free to implement the UI for the API in any manner we want to.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="UI for the application" duration="10">
+        <p>Now, we can develop a quick UI to work with the API of the chatbot. Here&#39;s some sample HTML/JS to create one such UI.</p>
+<pre><code language="language-html" class="language-html">&lt;div&gt;
+    &lt;div id=&#34;chat-box&#34; class=&#34;bg-light p-3 mb-3 rounded&#34;&gt;
+        &lt;blockquote style=&#34;border-left: 4px solid #43a047;&#34;&gt;Hi, I am Sheldon Cooper. Upload an image and I will tell you a fun fact.&lt;/blockquote&gt;
+    &lt;/div&gt;
+    &lt;progress id=&#34;progress-bar&#34; style=&#34;display: none&#34;&gt;&lt;/progress&gt;
+    
+    &lt;!-- Updated form to include file upload --&gt;
+    &lt;form id=&#34;chat-form&#34;&gt;
+        &lt;div class=&#34;input-group mb-3&#34;&gt;
+            &lt;input id=&#34;image-input&#34; type=&#34;file&#34; class=&#34;form-control&#34;&gt;
+        &lt;/div&gt;
+        &lt;div class=&#34;input-group&#34;&gt;
+            &lt;button type=&#34;submit&#34; id=&#34;send-button&#34; class=&#34;btn btn-primary&#34;&gt;Upload&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/form&gt;
+&lt;/div&gt;
+</code></pre>
+<p>Then, let&#39;s add some JavaScript to the page for interactivity:</p>
+<pre><code language="language-html" class="language-html">&lt;script&gt;
+function appendImageToChat(file) {
+    var reader = new FileReader();
+
+    reader.onloadend = function () {
+        var img = $(&#39;&lt;img&gt;&#39;).attr(&#39;src&#39;, reader.result).css({&#39;max-width&#39;: &#39;100%&#39;, &#39;height&#39;: &#39;auto&#39;});
+        $(&#39;#chat-box&#39;).append($(&#39;&lt;blockquote&gt;&#39;).css({&#39;border-left&#39;: &#39;4px solid dodgerblue&#39;}).append(img));
+    }
+
+    if (file) {
+        reader.readAsDataURL(file);
+    }
+}
+
+$(function() {
+    $(&#39;#chat-form&#39;).submit(function(e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        var formData = new FormData(this);
+        var fileInput = $(&#39;#image-input&#39;)[0].files[0];
+
+        formData.append(&#39;user_image&#39;, fileInput);
+
+        if (fileInput) {
+            $(&#39;#chat-box&#39;).append(&#39;&lt;blockquote style=&#34;border-left: 4px solid #1288ff;&#34;&gt;User: &lt;/blockquote&gt;&#39;);
+            appendImageToChat(fileInput);
+            $(&#39;#image-input&#39;).val(&#39;&#39;);
+            $(&#39;#progress-bar&#39;).show();
+            
+            // Use AJAX to send the formData to the server
+            $.ajax({
+                url: &#39;/chat&#39;,
+                type: &#39;POST&#39;,
+                data: formData,
+                processData: false, // Prevent jQuery from converting the data into a query string
+                contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+                success: function(data) {
+                    $(&#39;#chat-box&#39;).append(&#39;&lt;blockquote style=&#34;border-left: 4px solid #43a047;&#34;&gt;Sheldon: &#39; + data.response + &#39;&lt;/blockquote&gt;&#39;);
+                    $(&#39;#progress-bar&#39;).hide();
+                },
+                error: function() {
+                    $(&#39;#chat-box&#39;).append(&#39;&lt;blockquote style=&#34;border-left: 4px solid red;&#34;&gt;Sheldon: Sorry, I am not able to respond at the moment.&lt;/blockquote&gt;&#39;);
+                    $(&#39;#progress-bar&#39;).hide();
+                }
+            });
+        }
+    });
+});
+&lt;/script&gt;
+
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running the App" duration="2">
+        <ol type="1">
+<li>Run your application: <pre><code language="language-bash" class="language-bash">python main.py
+</code></pre>
+</li>
+<li>Open your web browser and go to <code>http://localhost:8080</code>. You should see your chatbot interface.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Interacting with Your Chatbot" duration="2">
+        <ol type="1">
+<li>The bot will greet you asking you to provide an image.</li>
+<li>Upload a JPG/PNG below 1MB to the interface and click Upload.</li>
+<li>The chatbot will respond with a fun fact about the image!</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You&#39;ve just built and deployed a software powered by Google&#39;s Gemini AI! This bot acts like Sheldon Cooper and provides facts about user&#39;s uploaded images!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="What&#39;s Next?" duration="1">
+        <ul>
+<li>Experiment with different model parameters to see how they affect the output.</li>
+<li>Try integrating this chatbot into a larger web application.</li>
+<li>Explore other capabilities of Gemini AI.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

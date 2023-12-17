@@ -15,7 +15,7 @@ Duration: 1
 
 Hey there!
 
-In this Codelab, we'll walk through creating a simple chatbot based game using Google Cloud's Vertex AI and Flask, a popular web framework in Python. Our application will ask you to 
+In this Codelab, we'll walk through creating a simple chatbot based game using Google Cloud's Vertex AI and Flask, a popular web framework in Python. Our application will ask you to make a guess about what the bot is thinking and the bot will respond with hints about what it is thinking and how far away your guess is from the correct item.
 
 
 <!-- ------------------------ -->
