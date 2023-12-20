@@ -1,0 +1,142 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Google Cloud Run example using Python Flask</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid="G-NKJL65V2YL"
+                  codelab-ga4id=""
+                  id="google-cloud-run-python-flask-example"
+                  title="Google Cloud Run example using Python Flask"
+                  environment="web"
+                  feedback-link="https://xprilion.com/codelabs/">
+    
+      <google-codelab-step label="Overview" duration="1">
+        <p>Hey there!</p>
+<p>This codelab will walk you through the process of creating a simple &#34;Hello World&#34; application using Python Flask and deploying it to Google Cloud Run.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Requirements" duration="2">
+        <p>In order to follow this codelab, you&#39;ll need the following:</p>
+<ol type="1">
+<li>A Google Cloud Platform account.</li>
+<li>Google Cloud CLI installed and initialized.</li>
+<li>Python installed locally.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting Up Your Google Cloud Account" duration="10">
+        <ol type="1">
+<li>Head over to <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Platform</a> and create an account.</li>
+<li>Create a new project, let&#39;s name it <code>project-x</code>.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install Google Cloud CLI" duration="5">
+        <p>Follow the official guide to install the Google Cloud CLI: <a href="https://cloud.google.com/sdk/docs/install" target="_blank">Installing Google Cloud SDK</a>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create and Run the Flask Application" duration="15">
+        <ol type="1">
+<li>Set up a new directory for your project:<pre><code language="language-bash" class="language-bash">mkdir hello-world-cloud-run
+cd hello-world-cloud-run
+</code></pre>
+</li>
+<li>Create a Python virtual environment and activate it:<pre><code language="language-bash" class="language-bash">python3 -m venv venv
+source venv/bin/activate
+</code></pre>
+</li>
+<li>Install Flask:<pre><code language="language-bash" class="language-bash">pip install Flask
+</code></pre>
+</li>
+<li>Create a file named <code>app.py</code> with the following content:<pre><code language="language-python" class="language-python">from flask import Flask
+import os
+
+app = Flask(__name__)
+
+@app.route(&#39;/&#39;)
+def hello_world():
+    return &#39;Hello, World!&#39;
+
+if __name__ == &#39;__main__&#39;:
+    app.run(debug=True, host=&#34;0.0.0.0&#34;, port=int(os.environ.get(&#34;PORT&#34;, 8080)))
+</code></pre>
+</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running the App Locally" duration="2">
+        <ol type="1">
+<li>Run your application locally:<pre><code language="language-bash" class="language-bash">python app.py
+</code></pre>
+</li>
+<li>Open your web browser and go to <code>http://localhost:8080</code>. You should see the &#34;Hello, World!&#34; message.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Deploy to Google Cloud Run" duration="5">
+        <ol type="1">
+<li>Deploy your application to Google Cloud Run:<pre><code language="language-bash" class="language-bash">gcloud run deploy --source . --platform managed --region YOUR_REGION --allow-unauthenticated
+</code></pre>
+Replace <code>YOUR_REGION</code> with your preferred region.</li>
+<li>Wait for the deployment to complete. You will receive a URL where your application is live.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You&#39;ve just built and deployed a simple application on Google Cloud Run using Python and Flask!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="What&#39;s Next?" duration="1">
+        <ul>
+<li>Experiment with adding more routes and functionalities to your Flask application.</li>
+<li>Learn more about managing and monitoring your applications on Google Cloud Run.</li>
+<li>Explore other Google Cloud services that can enhance your application.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

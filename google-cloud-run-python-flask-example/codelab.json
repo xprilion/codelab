@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2023-12-20T23:52:15+05:30",
+  "id": "google-cloud-run-python-flask-example",
+  "duration": 42,
+  "title": "Google Cloud Run example using Python Flask",
+  "authors": "Anubhav Singh",
+  "summary": "Google Cloud Run example using Python Flask",
+  "source": "md/google-cloud-run-python-flask-example/index.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "python"
+  ],
+  "tags": [
+    "beginner"
+  ],
+  "feedback": "https://xprilion.com/codelabs/",
+  "ga": "G-NKJL65V2YL",
+  "url": "google-cloud-run-python-flask-example"
+}
