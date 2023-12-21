@@ -33,7 +33,8 @@ In order to follow this codelab, you'll need the following:
 Duration: 10
 
 1. Head over to [Google Cloud Platform](https://console.cloud.google.com/) and create an account.
-2. Create a new project, let's name it `project-x`.
+2. Enable billing
+3. Create a new project, let's name it `project-x`.
 
 <!-- ------------------------ -->
 ## Install Google Cloud CLI
