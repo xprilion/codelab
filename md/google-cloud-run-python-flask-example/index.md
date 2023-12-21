@@ -53,8 +53,8 @@ Duration: 15
 
 2. Create a Python virtual environment and activate it:
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate
+   python3 -m venv .venv
+   source .venv/bin/activate
    ```
 
 3. Install Flask:
@@ -62,7 +62,7 @@ Duration: 15
    pip install Flask
    ```
 
-4. Create a file named `app.py` with the following content:
+4. Create a file named `main.py` with the following content:
    ```python
    from flask import Flask
    import os
@@ -83,7 +83,7 @@ Duration: 2
 
 1. Run your application locally:
    ```bash
-   python app.py
+   python main.py
    ```
 
 2. Open your web browser and go to `http://localhost:8080`. You should see the "Hello, World!" message.
@@ -92,12 +92,16 @@ Duration: 2
 ## Deploy to Google Cloud Run
 Duration: 5
 
-1. Deploy your application to Google Cloud Run:
-   ```bash
-   gcloud run deploy --source . --platform managed --region YOUR_REGION --allow-unauthenticated
-   ```
+1. Generate the requirements.txt file
 
-   Replace `YOUR_REGION` with your preferred region.
+    ```bash
+    pip list --format=freeze > requirements.txt
+    ```
+
+2. Deploy your application to Google Cloud Run:
+   ```bash
+   gcloud run deploy
+   ```
 
 2. Wait for the deployment to complete. You will receive a URL where your application is live.
 
