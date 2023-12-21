@@ -67,14 +67,14 @@
 cd hello-world-cloud-run
 </code></pre>
 </li>
-<li>Create a Python virtual environment and activate it:<pre><code language="language-bash" class="language-bash">python3 -m venv venv
-source venv/bin/activate
+<li>Create a Python virtual environment and activate it:<pre><code language="language-bash" class="language-bash">python3 -m venv .venv
+source .venv/bin/activate
 </code></pre>
 </li>
 <li>Install Flask:<pre><code language="language-bash" class="language-bash">pip install Flask
 </code></pre>
 </li>
-<li>Create a file named <code>app.py</code> with the following content:<pre><code language="language-python" class="language-python">from flask import Flask
+<li>Create a file named <code>main.py</code> with the following content:<pre><code language="language-python" class="language-python">from flask import Flask
 import os
 
 app = Flask(__name__)
@@ -94,7 +94,7 @@ if __name__ == &#39;__main__&#39;:
     
       <google-codelab-step label="Running the App Locally" duration="2">
         <ol type="1">
-<li>Run your application locally:<pre><code language="language-bash" class="language-bash">python app.py
+<li>Run your application locally:<pre><code language="language-bash" class="language-bash">python main.py
 </code></pre>
 </li>
 <li>Open your web browser and go to <code>http://localhost:8080</code>. You should see the &#34;Hello, World!&#34; message.</li>
@@ -105,9 +105,12 @@ if __name__ == &#39;__main__&#39;:
     
       <google-codelab-step label="Deploy to Google Cloud Run" duration="5">
         <ol type="1">
-<li>Deploy your application to Google Cloud Run:<pre><code language="language-bash" class="language-bash">gcloud run deploy --source . --platform managed --region YOUR_REGION --allow-unauthenticated
+<li>Generate the requirements.txt file<pre><code language="language-bash" class="language-bash">pip list --format=freeze &gt; requirements.txt
 </code></pre>
-Replace <code>YOUR_REGION</code> with your preferred region.</li>
+</li>
+<li>Deploy your application to Google Cloud Run:<pre><code language="language-bash" class="language-bash">gcloud run deploy
+</code></pre>
+</li>
 <li>Wait for the deployment to complete. You will receive a URL where your application is live.</li>
 </ol>
 
