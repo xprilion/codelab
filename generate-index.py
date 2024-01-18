@@ -39,7 +39,7 @@ def create_json(root_dir):
     return json.dumps(sorted_entries, indent=4)
 
 def main():
-    root_dir = '.'  # Root directory containing the markdown files
+    root_dir = 'md' 
     json_data = create_json(root_dir)
 
     with open('index.json', 'w') as json_file:

@@ -16,7 +16,7 @@
         "level": "beginner"
     },
     {
-        "title": "Introduction to Building Solutions with PaLM2 API via Vertex AI on GCP",
+        "title": "Introduction to Building Solutions with PaLM2 API via VertexAI on GCP",
         "slug": "vertexai-palm-api-introduction-python",
         "publishedAt": "2023-12-09T00:00:00Z",
         "brief": "A starter guide to building innovative solutions with PaLM2 API via Vertex AI on GCP.",

@@ -1,4 +1,4 @@
-summary: Example of a Python Flask application built with Gemini Pro Vision Multimodal
+summary: A starter example of using Gemini AI Pro Vision Multimodal model via Google AI Studio (formerly MakerSuite).
 id: gemini-pro-vision-multimodal-python-flask-generative-ai-example
 categories: python
 tags: beginner
@@ -6,6 +6,7 @@ status: Published
 authors: Anubhav Singh
 feedback Link: https://xprilion.com/codelabs/
 analytics account: G-NKJL65V2YL
+publishedAt: 2023-12-17T00:00:00Z
 
 
 # Example of a Python Flask application built with Gemini Pro Vision Multimodal

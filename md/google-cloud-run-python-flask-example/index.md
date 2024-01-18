@@ -1,4 +1,4 @@
-summary: Google Cloud Run example using Python Flask
+summary: An example of deploying a Python Flask application to Google Cloud Run.
 id: google-cloud-run-python-flask-example
 categories: python
 tags: beginner
@@ -6,6 +6,7 @@ status: Published
 authors: Anubhav Singh
 feedback Link: https://xprilion.com/codelabs/
 analytics account: G-NKJL65V2YL
+publishedAt: 2023-12-20T00:00:00Z
 
 
 # Google Cloud Run example using Python Flask

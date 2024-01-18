@@ -1,4 +1,4 @@
-summary: Introduction to Building Solutions with PaLM2 API via Vertex AI on GCP
+summary: A starter guide to building innovative solutions with PaLM2 API via Vertex AI on GCP.
 id: vertexai-palm-api-introduction-python
 categories: python
 tags: beginner
@@ -6,6 +6,7 @@ status: Published
 authors: Anubhav Singh
 feedback Link: https://xprilion.com/codelabs/
 analytics account: G-NKJL65V2YL
+publishedAt: 2023-12-09T00:00:00Z
 
 
 # Introduction to Building Solutions with PaLM2 API via VertexAI on GCP
